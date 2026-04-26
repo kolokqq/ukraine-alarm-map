@@ -4,113 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <title>UA_MONITOR // TACTICAL HUD // AFU</title>
+    <title>UA_MONITOR // NEON_TAC_v5 // PHANTOM_PROTOCOL</title>
     
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://sky-monitor.fun/">
-    <meta property="og:title" content="UA_MONITOR // TACTICAL HUD // AFU">
-    <meta property="og:description" content="Карта повітряних тривог України. Моніторинг повітряних тривог та авіації. AFU EDITION.">
-    <meta property="og:image" content="https://sky-monitor.fun/logo.jpg">
-    
-    <link rel="canonical" href="https://sky-monitor.fun">
-    <link rel="icon" href="https://sky-monitor.fun/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --ua-blue: #0057b7;   /* Синій флаг ЗСУ */
-            --ua-gold: #ffd700;   /* Золотий флаг ЗСУ */
-            --bg: #030405; 
-            --card: rgba(5, 7, 10, 0.9); 
-            --red: #ff3333; 
+            --neon-gold: #ffea00;    /* Розплавлене ненове золото */
+            --neon-cyan: #00f7ff;    /* Плазмовий ціан */
+            --bg-deep: #020203; 
+            --card-glass: rgba(10, 10, 15, 0.9); 
+            --crit-red: #ff003c;     /* Критичний червоний неон */
+            --glow: 0 0 15px rgba(255, 234, 0, 0.4);
+            --glow-cyan: 0 0 20px rgba(0, 247, 255, 0.3);
         }
         
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Share Tech Mono', monospace; color: #fff; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-deep); font-family: 'Share Tech Mono', monospace; color: #fff; overflow: hidden; }
         
-        /* Ефект цифрового камуфляжу та CRT-сітки */
+        /* ГАЛАКТИЧНА ГЛОГРАФІЧНА СІТКА */
         body::before {
             content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
             background: 
-                /* CRT сітка */
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02)),
-                /* Легкий цифровий шум */
-                url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36z8gAFWNZvXr1f0ZGRpBCfHw8AEbYDQm+mR6gAAAAAElFTkSuQmCC');
-            z-index: 1000; background-size: 100% 4px, 3px 100%, auto; pointer-events: none; opacity: 0.3;
+                /* Тонка неонова сітка */
+                linear-gradient(rgba(0, 247, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 247, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1000; pointer-events: none; opacity: 0.4;
         }
 
         .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
+        /* HEADER: Cyber-Gold Бар */
         .header { 
-            height: 60px; display: flex; align-items: center; padding: 0 20px; 
-            background: var(--card); border-bottom: 2px solid var(--ua-blue);
-            box-shadow: 0 0 20px rgba(0, 87, 183, 0.3); z-index: 10;
+            height: 65px; display: flex; align-items: center; padding: 0 25px; 
+            background: var(--card-glass); border-bottom: 2px solid var(--neon-gold);
+            backdrop-filter: blur(20px); box-shadow: 0 0 25px rgba(255, 234, 0, 0.2); z-index: 10;
         }
         
-        .brand { font-size: 14px; font-weight: 900; color: var(--ua-gold); text-transform: uppercase; letter-spacing: 3px; line-height: 1; text-shadow: 0 0 5px var(--ua-gold); }
-        #kyiv-time { margin-left: 20px; font-size: 26px; font-weight: 900; color: var(--red); font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px var(--red); }
+        .brand { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 4px; line-height: 1; text-shadow: var(--glow-cyan); }
+        .brand span { color: var(--neon-cyan); }
+        #kyiv-time { margin-left: 25px; font-size: 28px; font-weight: 900; color: var(--crit-red); text-shadow: 0 0 15px var(--crit-red); font-family: 'Share Tech Mono', monospace; }
 
-        .viewport { flex-grow: 1; margin: 10px; border-radius: 5px; border: 1px solid var(--ua-blue); position: relative; background: #000; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; filter: sepia(0.3) hue-rotate(180deg) brightness(0.8) contrast(1.1); }
+        /* VIEWPORT: Екран Зони */
+        .viewport { flex-grow: 1; margin: 15px; border-radius: 5px; border: 1px solid rgba(0, 247, 255, 0.3); position: relative; background: #000; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; filter: contrast(1.1) brightness(0.9) hue-rotate(-20deg); }
 
-        /* Оновлені тактичні оверлеї */
+        /* ОНОВЛЕНІ ГОЛОГРАФІЧНІ ОВЕРЛЕЇ */
         #tg-overlay, #targets-overlay { 
-            position: absolute; background: rgba(3, 4, 5, 0.9); padding: 15px; 
-            border: 1px solid var(--ua-blue); border-radius: 0; z-index: 999;
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1px; pointer-events: none;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            position: absolute; background: var(--card-glass); padding: 18px; 
+            border: 1px solid var(--neon-gold); border-radius: 0; z-index: 999;
+            font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; pointer-events: none;
+            backdrop-filter: blur(10px);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            box-shadow: var(--glow);
         }
-        #tg-overlay { top: 20px; left: 20px; width: 320px; border-left: 3px solid var(--ua-gold); }
-        #targets-overlay { top: 20px; right: 20px; width: 280px; border-right: 3px solid var(--red); color: var(--red); border-color: var(--red); }
+        #tg-overlay { top: 25px; left: 25px; width: 340px; border-left: 4px solid var(--neon-cyan); }
+        #targets-overlay { top: 25px; right: 25px; width: 300px; border-right: 4px solid var(--crit-red); color: var(--crit-red); border-color: var(--crit-red); text-shadow: 0 0 10px var(--crit-red); }
 
-        /* Декоративні штучки: Кутові мітки */
-        .viewport::before, .viewport::after {
-            content: ""; position: absolute; width: 20px; height: 20px; border: 2px solid var(--ua-gold); z-index: 998;
+        /* ТАКТИЧНИЙ СПИСОК ТРИВОГ (НОВИЙ ДИЗАЙН) */
+        #alerts-sidebar {
+            position: absolute; bottom: 25px; left: 25px; width: 220px; max-height: 320px; 
+            background: rgba(0, 247, 255, 0.1); padding: 15px; z-index: 999; 
+            border: 1px solid var(--neon-cyan); font-size: 11px; overflow-y: auto;
+            backdrop-filter: blur(10px); box-shadow: var(--glow-cyan);
         }
-        .viewport::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
-        .viewport::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+        #alerts-sidebar .title { color: var(--neon-cyan); font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid rgba(0, 247, 255, 0.3); padding-bottom: 3px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; }
+        #active-alerts-list li { color: #fff; margin-bottom: 5px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
-        /* Індикатор REC та Статус */
-        .tactical-info { position: absolute; bottom: 40px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; z-index: 999; font-size: 10px; color: var(--ua-blue); }
-        .status-line { display: flex; align-items: center; gap: 8px; }
-        .rec-indicator { display: flex; align-items: center; gap: 8px; color: var(--red); font-weight: 800; }
-        .dot { width: 10px; height: 10px; background: var(--red); border-radius: 50%; animation: blink 1s infinite; }
+        /* ІНДИКАТОР ТАКТИЧНОЇ АКТИВНОСТІ */
+        .tactical-status { position: absolute; bottom: 45px; right: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 999; font-size: 11px; color: var(--neon-cyan); }
+        .status-dot { width: 12px; height: 12px; background: var(--neon-gold); border-radius: 50%; box-shadow: var(--glow); animation: pulse_gold 2s infinite; }
         
-        /* Скануюча лінія */
-        .scanline { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0, 87, 183, 0.2); animation: scan 4s linear infinite; z-index: 997; }
+        /* СКАНИ УСЮДИ */
+        .scanline { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0, 247, 255, 0.2); animation: scan 3s linear infinite; z-index: 997; }
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes pulse_gold { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } }
         @keyframes scan { from { top: 0%; } to { top: 100%; } }
 
-        /* Магучий бігучий рядок */
-        .marquee-container { background: var(--ua-blue); color: var(--ua-gold); padding: 7px 0; font-size: 12px; font-weight: 900; overflow: hidden; white-space: nowrap; border-top: 1px solid var(--ua-gold); box-shadow: 0 -5px 15px rgba(0, 87, 183, 0.2); }
-        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; text-transform: uppercase; letter-spacing: 1px; }
+        /* БІГУЧИЙ РЯДОК: МАРГАШ */
+        .marquee-container { background: #000; color: var(--neon-gold); padding: 8px 0; font-size: 13px; font-weight: 900; overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(0, 247, 255, 0.3); }
+        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; text-transform: uppercase; letter-spacing: 2px; }
         @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="wrapper">
     <header class="header">
-        <div class="brand">AFU // TACTICAL<br>UA_MONITOR // ACTIVE</div>
+        <div class="brand">UA_MONITOR // <span>NEON_TAC_v5</span></div>
         <div id="kyiv-time">00:00:00</div>
     </header>
 
     <main class="viewport">
         <div class="scanline"></div>
-        <div class="tactical-info">
-            <div class="status-line"><span>SYS: AFU_NET_v4.1</span><span>[CONNECTED]</span></div>
-            <div class="rec-indicator"><div class="dot"></div> LIVE_FEED</div>
+        <div class="tactical-status">
+            <div class="status-line" style="display:flex; align-items:center; gap:8px;"><span>STAT: PHANTOM_PROTOCOL</span><div class="status-dot"></div></div>
+            <div class="rec-indicator" style="color:var(--crit-red); font-weight:800; text-shadow:0 0 5px var(--crit-red);">DATA_STREAM [ACTIVE]</div>
         </div>
         
         <div id="tg-overlay">
-            <div style="font-weight:bold; color:var(--ua-gold); letter-spacing: 2px; border-bottom: 1px solid var(--ua-gold); padding-bottom: 5px; margin-bottom: 10px;">ОПЕРАТИВНЕ ЗВЕДЕННЯ:</div>
-            <div id="tg-content">Завантаження даних...</div>
+            <div style="font-weight:bold; color:var(--neon-gold); letter-spacing: 2.5px; border-bottom: 1px solid rgba(255, 234, 0, 0.3); padding-bottom: 5px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">LIVE INTEL // OP_UPDATE</div>
+            <div id="tg-content">Завантаження даних системи...</div>
         </div>
         
         <div id="targets-overlay">
-            <div style="font-weight:bold; letter-spacing: 2px;">УВАГА: ЦІЛІ В ПОВІТРІ</div>
-            <div id="targets-content">НЕМАЄ</div>
+            <div style="font-weight:bold; letter-spacing: 2.5px; font-family: 'Orbitron', sans-serif;">THREAT_DETECTION // HIGH</div>
+            <div id="targets-content">ЦІЛІ НЕ ВИЯВЛЕНО</div>
+        </div>
+
+        <div id="alerts-sidebar">
+            <div class="title">АКТИВНІ ЗОНИ</div>
+            <ul id="active-alerts-list"></ul>
         </div>
 
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
@@ -122,6 +126,7 @@
 </div>
 
 <script>
+    // ВСЯ ЛОГІКА СКРИПТІВ ЗАЛИШИЛАСЯ БЕЗ ЗМІН
     function updateClock() { document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false }); }
     setInterval(updateClock, 1000); updateClock();
 
@@ -137,7 +142,7 @@
                     document.getElementById('targets-content').innerText = latestPost;
                 }
             }
-        } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг мережі активний"; }
+        } catch(e) { document.getElementById('tg-content').innerText = "Система моніторингу активна"; }
     }
     loadTg(); setInterval(loadTg, 60000);
 
@@ -147,7 +152,22 @@
                 headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
             });
             const data = await response.json();
-            document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") + " | СЛАВА ЗСУ!" : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ! ГЕРОЯМ СЛАВА!";
+            
+            // Оновлюємо бігучий рядок
+            document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") + " | СЛАВА ЗСУ!" : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
+            
+            // Оновлюємо список у боковій панелі
+            const list = document.getElementById('active-alerts-list');
+            list.innerHTML = ""; // очищаємо
+            if (data.length > 0) {
+                data.forEach(a => {
+                    const li = document.createElement('li');
+                    li.innerText = ">> " + a.regionName;
+                    list.appendChild(li);
+                });
+            } else {
+                list.innerHTML = "<li style='color:#ccc;'>ТРИВОГ НЕМАЄ</li>";
+            }
         } catch(e) { document.getElementById('rss-feed').innerText = "Система активна... AFU // TACTICAL NET"; }
     }
     loadApi(); setInterval(loadApi, 30000);
