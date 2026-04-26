@@ -103,7 +103,7 @@
     async function loadApi() {
         try {
             const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
-                headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
+                headers: { "Authorization": "eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
             });
             const data = await response.json();
             document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
@@ -112,7 +112,7 @@
             document.getElementById('dot').className = data.length > 0 ? "dot red-dot" : "dot green-dot";
         } catch(e) { document.getElementById('rss-feed').innerText = "Система активна..."; }
     }
-    loadApi(); setInterval(loadApi, 10000);
+   loadApi(); setInterval(loadApi, 1000); // Оновлення кожні 3 секунди
 </script>
 
 </body>
