@@ -23,10 +23,10 @@
         .viewport { flex-grow: 1; margin: 8px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--accent); position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* ЛЕГЕНДА ПРИМУСОВО ЗЛІВА */
+        /* ЛЕГЕНДА ПІДНЯТА ВИЩЕ, ЩОБ НЕ ПЕРЕКРИВАТИ ТЕКСТ */
         .legend-block { 
             position: absolute !important; 
-            bottom: 20px !important; 
+            bottom: 80px !important; 
             left: 20px !important; 
             right: auto !important;
             background: rgba(0, 0, 0, 0.85); 
@@ -42,7 +42,7 @@
         .legend-icon { width: 20px; height: 20px; margin-right: 10px; fill: #fff; }
         
         @media (max-width: 600px) { 
-            .legend-block { bottom: 10px !important; left: 10px !important; right: auto !important; padding: 6px; font-size: 10px; } 
+            .legend-block { bottom: 90px !important; left: 10px !important; right: auto !important; padding: 6px; font-size: 10px; } 
             .legend-icon { width: 12px; height: 12px; margin-right: 5px; } 
         }
 
@@ -67,7 +67,15 @@
             <div class="legend-item"><svg class="legend-icon" viewBox="0 0 100 100"><path d="M50 5 L60 20 L60 60 L80 60 L80 70 L60 70 L60 90 L40 90 L40 70 L20 70 L20 60 L40 60 L40 20 Z M40 80 L30 95 L40 95 Z"/></svg><div>Х-101</div></div>
         </div>
 
-       
+        <div id="tg-overlay">
+            <div style="font-weight:bold; color:var(--accent);">ОПЕРАТИВНО:</div>
+            <div id="tg-content">Завантаження...</div>
+        </div>
+        
+        <div id="targets-overlay">
+            <div>ЦІЛІ В ПОВІТРІ:</div>
+            <div id="targets-content">Немає</div>
+        </div>
 
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </main>
@@ -92,12 +100,12 @@
             }
         } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг працює"; }
     }
-    loadTg(); setInterval(loadTg, 3000);
+    loadTg(); setInterval(loadTg, 8000);
 
     async function loadApi() {
         try {
             const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
-                headers: { "Authorization": "eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
+                headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
             });
             const data = await response.json();
             document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
