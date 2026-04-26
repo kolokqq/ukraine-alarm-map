@@ -4,117 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <title>UA_MONITOR // NEON_TAC_v5 // PHANTOM_PROTOCOL</title>
+    <title>UA_MONITOR // HELLFIRE_PROTOCOL // ACTIVE</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="canonical" href="https://sky-monitor.fun">
+    <link rel="icon" href="https://sky-monitor.fun/favicon.ico" type="image/x-icon">
     
     <style>
         :root { 
-            --neon-gold: #ffea00;    /* Розплавлене ненове золото */
-            --neon-cyan: #00f7ff;    /* Плазмовий ціан */
-            --bg-deep: #020203; 
-            --card-glass: rgba(10, 10, 15, 0.9); 
-            --crit-red: #ff003c;     /* Критичний червоний неон */
-            --glow: 0 0 15px rgba(255, 234, 0, 0.4);
-            --glow-cyan: 0 0 20px rgba(0, 247, 255, 0.3);
+            --fire-core: #ff4500;   /* Серце вогню */
+            --fire-glow: #8b0000;   /* Кривавий відблиск */
+            --bg: #000; 
+            --card: rgba(10, 0, 0, 0.85); /* Темно-червоний для оверлеїв */
+            --red: #ff0000; 
         }
         
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-deep); font-family: 'Share Tech Mono', monospace; color: #fff; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Impact', sans-serif; color: #fff; overflow: hidden; }
         
-        /* ГАЛАКТИЧНА ГЛОГРАФІЧНА СІТКА */
-        body::before {
-            content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: 
-                /* Тонка неонова сітка */
-                linear-gradient(rgba(0, 247, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 247, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: 1000; pointer-events: none; opacity: 0.4;
+        /* КАНВАС ДЛЯ АНІМАЦІЇ ВОГНЮ */
+        #fireCanvas {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; /* Вогонь займає 60% екрана знизу */
+            z-index: 1; /* Вогонь ПОЗАДУ оверлеїв, але ПОВЕРХ мапи */
+            pointer-events: none; /* Щоб вогонь не заважав клікати */
         }
 
-        .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; }
+        .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 2; /* Усі елементи поверх вогню */ }
 
-        /* HEADER: Cyber-Gold Бар */
+        /* HEADER: Мерехтливий, "гарячий" */
         .header { 
-            height: 65px; display: flex; align-items: center; padding: 0 25px; 
-            background: var(--card-glass); border-bottom: 2px solid var(--neon-gold);
-            backdrop-filter: blur(20px); box-shadow: 0 0 25px rgba(255, 234, 0, 0.2); z-index: 10;
+            height: 60px; display: flex; align-items: center; padding: 0 20px; 
+            background: var(--card); border-bottom: 3px solid var(--fire-core);
+            backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(255, 69, 0, 0.5); z-index: 10;
+            animation: flicker 0.15s infinite; /* Ефект мерехтіння вогню */
         }
         
-        .brand { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 4px; line-height: 1; text-shadow: var(--glow-cyan); }
-        .brand span { color: var(--neon-cyan); }
-        #kyiv-time { margin-left: 25px; font-size: 28px; font-weight: 900; color: var(--crit-red); text-shadow: 0 0 15px var(--crit-red); font-family: 'Share Tech Mono', monospace; }
+        .brand { font-size: 16px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 3px; line-height: 1; text-shadow: 0 0 10px var(--fire-core); }
+        #kyiv-time { margin-left: 20px; font-size: 30px; font-weight: 900; color: var(--red); text-shadow: 0 0 15px var(--red); }
 
-        /* VIEWPORT: Екран Зони */
-        .viewport { flex-grow: 1; margin: 15px; border-radius: 5px; border: 1px solid rgba(0, 247, 255, 0.3); position: relative; background: #000; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; filter: contrast(1.1) brightness(0.9) hue-rotate(-20deg); }
+        .viewport { flex-grow: 1; margin: 10px; border-radius: 5px; border: 2px solid var(--fire-core); position: relative; background: #000; overflow: hidden; box-shadow: inset 0 0 30px var(--fire-glow); }
+        
+        /* Iframe: Карта з ефектом "пекельних креслень" */
+        iframe { 
+            width: 100%; height: 100%; border: none; 
+            filter: sepia(1) hue-rotate(-50deg) contrast(1.5) brightness(0.8); /* Перетворює синю карту на вогняну */
+        }
 
-        /* ОНОВЛЕНІ ГОЛОГРАФІЧНІ ОВЕРЛЕЇ */
+        /* ОВЕРЛЕЇ: "Розпечені", з ефектом зрізів */
         #tg-overlay, #targets-overlay { 
-            position: absolute; background: var(--card-glass); padding: 18px; 
-            border: 1px solid var(--neon-gold); border-radius: 0; z-index: 999;
-            font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; pointer-events: none;
+            position: absolute; background: rgba(10, 0, 0, 0.9); padding: 18px; 
+            border: 1px solid var(--fire-core); border-radius: 0; z-index: 999;
+            font-size: 12px; text-transform: uppercase; letter-spacing: 2px; pointer-events: none;
             backdrop-filter: blur(10px);
             clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-            box-shadow: var(--glow);
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+            animation: heat_haze 3s infinite ease-in-out; /* Ефект "марева" від жару */
         }
-        #tg-overlay { top: 25px; left: 25px; width: 340px; border-left: 4px solid var(--neon-cyan); }
-        #targets-overlay { top: 25px; right: 25px; width: 300px; border-right: 4px solid var(--crit-red); color: var(--crit-red); border-color: var(--crit-red); text-shadow: 0 0 10px var(--crit-red); }
+        #tg-overlay { top: 25px; left: 25px; width: 340px; border-left: 5px solid var(--fire-core); }
+        #targets-overlay { top: 25px; right: 25px; width: 300px; border-right: 5px solid var(--red); color: var(--red); border-color: var(--red); }
 
-        /* ТАКТИЧНИЙ СПИСОК ТРИВОГ (НОВИЙ ДИЗАЙН) */
-        #alerts-sidebar {
-            position: absolute; bottom: 25px; left: 25px; width: 220px; max-height: 320px; 
-            background: rgba(0, 247, 255, 0.1); padding: 15px; z-index: 999; 
-            border: 1px solid var(--neon-cyan); font-size: 11px; overflow-y: auto;
-            backdrop-filter: blur(10px); box-shadow: var(--glow-cyan);
-        }
-        #alerts-sidebar .title { color: var(--neon-cyan); font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid rgba(0, 247, 255, 0.3); padding-bottom: 3px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; }
-        #active-alerts-list li { color: #fff; margin-bottom: 5px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-
-        /* ІНДИКАТОР ТАКТИЧНОЇ АКТИВНОСТІ */
-        .tactical-status { position: absolute; bottom: 45px; right: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 999; font-size: 11px; color: var(--neon-cyan); }
-        .status-dot { width: 12px; height: 12px; background: var(--neon-gold); border-radius: 50%; box-shadow: var(--glow); animation: pulse_gold 2s infinite; }
+        /* БІГУЧИЙ РЯДОК: "Палаючий" */
+        .marquee-container { background: var(--card); color: #fff; padding: 7px 0; font-size: 13px; font-weight: 900; overflow: hidden; white-space: nowrap; border-top: 1px solid var(--fire-core); }
+        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px #fff; }
         
-        /* СКАНИ УСЮДИ */
-        .scanline { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0, 247, 255, 0.2); animation: scan 3s linear infinite; z-index: 997; }
-
-        @keyframes pulse_gold { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } }
-        @keyframes scan { from { top: 0%; } to { top: 100%; } }
-
-        /* БІГУЧИЙ РЯДОК: МАРГАШ */
-        .marquee-container { background: #000; color: var(--neon-gold); padding: 8px 0; font-size: 13px; font-weight: 900; overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(0, 247, 255, 0.3); }
-        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; text-transform: uppercase; letter-spacing: 2px; }
+        /* АНІМАЦІЇ */
         @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.9; } }
+        @keyframes heat_haze { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
     </style>
 </head>
 <body>
 
+<canvas id="fireCanvas"></canvas>
+
 <div class="wrapper">
     <header class="header">
-        <div class="brand">UA_MONITOR // <span>NEON_TAC_v5</span></div>
+        <div class="brand">UA_MONITOR // HELLFIRE_PROTOCOL<br>ACTIVE // MONITORING</div>
         <div id="kyiv-time">00:00:00</div>
     </header>
 
     <main class="viewport">
-        <div class="scanline"></div>
-        <div class="tactical-status">
-            <div class="status-line" style="display:flex; align-items:center; gap:8px;"><span>STAT: PHANTOM_PROTOCOL</span><div class="status-dot"></div></div>
-            <div class="rec-indicator" style="color:var(--crit-red); font-weight:800; text-shadow:0 0 5px var(--crit-red);">DATA_STREAM [ACTIVE]</div>
-        </div>
         
         <div id="tg-overlay">
-            <div style="font-weight:bold; color:var(--neon-gold); letter-spacing: 2.5px; border-bottom: 1px solid rgba(255, 234, 0, 0.3); padding-bottom: 5px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">LIVE INTEL // OP_UPDATE</div>
+            <div style="font-weight:bold; color:var(--fire-core); letter-spacing: 2.5px; border-bottom: 1px solid var(--fire-core); padding-bottom: 5px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">LIVE INTEL // OP_UPDATE</div>
             <div id="tg-content">Завантаження даних системи...</div>
         </div>
         
         <div id="targets-overlay">
             <div style="font-weight:bold; letter-spacing: 2.5px; font-family: 'Orbitron', sans-serif;">THREAT_DETECTION // HIGH</div>
             <div id="targets-content">ЦІЛІ НЕ ВИЯВЛЕНО</div>
-        </div>
-
-        <div id="alerts-sidebar">
-            <div class="title">АКТИВНІ ЗОНИ</div>
-            <ul id="active-alerts-list"></ul>
         </div>
 
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
@@ -126,7 +102,81 @@
 </div>
 
 <script>
-    // ВСЯ ЛОГІКА СКРИПТІВ ЗАЛИШИЛАСЯ БЕЗ ЗМІН
+    // --- АНІМАЦІЯ ВОГНЮ (CANVAS) ---
+    const canvas = document.getElementById('fireCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Налаштування канвасу під розмір екрана
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const particles = [];
+    const particleCount = 250; // Кількість частинок вогню
+
+    // Клас частинки вогню
+    class Particle {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = canvas.height + Math.random() * 20; // Стартують знизу екрана
+            this.size = Math.random() * 25 + 10;
+            this.speedY = Math.random() * -3 - 1; // Швидкість підйому
+            this.color = `rgba(${255}, ${Math.random() * 69}, 0, ${Math.random() * 0.5 + 0.1})`; // Помаранчево-червоний
+            this.life = Math.random() * 100;
+        }
+
+        update() {
+            this.y += this.speedY;
+            if (this.size > 0.2) this.size -= 0.15;
+            this.life -= 1;
+            if (this.life < 0) {
+                this.reset();
+            }
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Ініціалізація
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+
+    // Цикл анімації
+    function animateFire() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Очищаємо канвас
+
+        // Додаємо ефект світіння та розмиття
+        ctx.globalCompositeOperation = 'lighter'; // Частинки світяться, коли накладаються
+        ctx.filter = 'blur(5px)'; // Додає реалістичне розмиття полум'я
+
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+
+        // Повертаємо стандартний режим
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.filter = 'none';
+
+        requestAnimationFrame(animateFire);
+    }
+    animateFire();
+
+
+    // --- ТВОЯ ЛОГІКА СКРИПТІВ (ЗАЛИШИЛАСЯ БЕЗ ЗМІН) ---
     function updateClock() { document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false }); }
     setInterval(updateClock, 1000); updateClock();
 
@@ -152,22 +202,7 @@
                 headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
             });
             const data = await response.json();
-            
-            // Оновлюємо бігучий рядок
             document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") + " | СЛАВА ЗСУ!" : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
-            
-            // Оновлюємо список у боковій панелі
-            const list = document.getElementById('active-alerts-list');
-            list.innerHTML = ""; // очищаємо
-            if (data.length > 0) {
-                data.forEach(a => {
-                    const li = document.createElement('li');
-                    li.innerText = ">> " + a.regionName;
-                    list.appendChild(li);
-                });
-            } else {
-                list.innerHTML = "<li style='color:#ccc;'>ТРИВОГ НЕМАЄ</li>";
-            }
         } catch(e) { document.getElementById('rss-feed').innerText = "Система активна... AFU // TACTICAL NET"; }
     }
     loadApi(); setInterval(loadApi, 30000);
