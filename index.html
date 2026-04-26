@@ -2,54 +2,68 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>IM_AR_UI</title>
+    <title>TACTICAL_HUD_V2026</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;700&display=swap');
+        
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Rajdhani', sans-serif; }
         
-        /* Карта на весь екран */
-        #map-container { position: absolute; width: 100%; height: 100%; }
-        iframe { width: 100%; height: 100%; border: none; filter: invert(1) hue-rotate(180deg) brightness(1.5) contrast(1.2); }
+        /* Карта на весь екран з холодним синім фільтром */
+        #map-overlay { position: absolute; width: 100%; height: 100%; z-index: 0; }
+        iframe { width: 100%; height: 100%; border: none; filter: grayscale(1) brightness(0.6) sepia(1) hue-rotate(180deg) contrast(1.2); }
 
-        /* AR-елементи поверх карти */
-        .hud-element { position: absolute; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; color: #fff; pointer-events: none; }
+        /* Плаваючі "Вузли даних" (Floating Data Nodes) */
+        .node { position: absolute; color: #fff; text-transform: uppercase; letter-spacing: 2px; z-index: 10; pointer-events: none; }
         
-        #top-right { top: 20px; right: 20px; text-align: right; }
-        #bottom-left { bottom: 20px; left: 20px; max-width: 300px; }
+        .node-title { font-size: 10px; color: #0ff; margin-bottom: 2px; }
+        .node-value { font-size: 20px; font-weight: 700; text-shadow: 0 0 10px rgba(0,255,255,0.5); }
         
-        .alert-tag { display: inline-block; background: #ff0000; padding: 2px 8px; margin: 2px; font-weight: bold; font-size: 12px; }
-        .time { font-size: 40px; font-weight: bold; line-height: 1; }
+        /* Спеціальний стиль для тривог */
+        .alert-node { color: #ff3333; }
+        .alert-node .node-value { text-shadow: 0 0 15px #f00; }
+
+        /* Лінії-з’єднувачі (візуальний ефект) */
+        .line { position: absolute; width: 100px; height: 1px; background: rgba(0,255,255,0.2); z-index: 5; }
     </style>
 </head>
 <body>
 
-    <div id="map-container">
+    <div id="map-overlay">
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </div>
 
-    <div class="hud-element" id="top-right">
-        <div class="time" id="clock">00:00</div>
-        <div style="font-size: 12px; letter-spacing: 2px;">LOCAL_SYSTEM_TIME</div>
+    <div class="node" style="top: 50px; left: 50px;">
+        <div class="node-title">SYSTEM_TIME // EEST</div>
+        <div class="node-value" id="clock">00:00:00</div>
     </div>
 
-    <div class="hud-element" id="bottom-left">
-        <div style="font-size: 10px; margin-bottom: 10px; letter-spacing: 2px;">ACTIVE_ALERTS_FEED</div>
+    <div class="node alert-node" style="top: 50px; right: 50px; text-align: right;">
+        <div class="node-title">THREAT_STATUS // ACTIVE</div>
         <div id="alerts-list"></div>
     </div>
 
     <script>
-        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('uk-UA', {hour: '2-digit', minute:'2-digit'}); }, 1000);
+        // Годинник
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('uk-UA', {hour: '2-digit', minute:'2-digit', second:'2-digit'}); }, 1000);
 
+        // API
         async function update() {
             const res = await fetch("https://api.ukrainealarm.com/api/v3/alerts", { headers: {"Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9"} });
             const data = await res.json();
             const list = document.getElementById('alerts-list');
-            list.innerHTML = data.length ? "" : "NO_ALERTS";
-            data.forEach(a => {
-                const span = document.createElement('span');
-                span.className = 'alert-tag';
-                span.innerText = a.regionName;
-                list.appendChild(span);
-            });
+            list.innerHTML = "";
+            
+            if(data.length === 0) {
+                list.innerHTML = "<div class='node-value' style='color:#0f0; text-shadow:0 0 10px #0f0'>CLEAR_SKIES</div>";
+            } else {
+                data.forEach(a => {
+                    const div = document.createElement('div');
+                    div.className = 'node-value';
+                    div.style.fontSize = '14px';
+                    div.innerText = a.regionName.toUpperCase();
+                    list.appendChild(div);
+                });
+            }
         }
         update(); setInterval(update, 30000);
     </script>
