@@ -24,11 +24,6 @@
         .brand { font-size: 11px; font-weight: 900; color: var(--accent); line-height: 1.1; text-transform: uppercase; }
         #kyiv-time { margin-left: 15px; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 900; color: #ff003c; text-shadow: 0 0 8px #ff003c; }
 
-        /* СТИЛЬ КНОПОК */
-        .btn-box { display: flex; gap: 8px; margin-left: auto; }
-        .nav-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 8px; font-weight: bold; }
-        .nav-btn svg { width: 16px; height: 16px; fill: var(--accent); }
-
         .viewport { flex-grow: 1; margin: 8px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--accent); position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
 
@@ -47,11 +42,11 @@
         <div class="brand">MONITOR<br>UA</div>
         <div id="kyiv-time">00:00:00</div>
         
-        <div class="btn-box">
-            <a href="ТВОЄ_ПОСИЛАННЯ_ТГ" class="nav-btn">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.24-1.5-1-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.06-.06-.15-.04-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.5 2.78-1.1 3.35-1.3 3.73-1.31.08 0 .27.02.39.12.1.08.13.19.14.27v.06z"/></svg>
+        <div style="margin-left: auto; display: flex; gap: 8px;">
+            <a href="ТВОЄ_ПОСИЛАННЯ_ТГ" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border:1px solid var(--accent); border-radius:6px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--accent)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.24-1.5-1-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.06-.06-.15-.04-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.5 2.78-1.1 3.35-1.3 3.73-1.31.08 0 .27.02.39.12.1.08.13.19.14.27v.06z"/></svg>
             </a>
-            <a href="ТВОЄ_ПОСИЛАННЯ_ПУМБ" class="nav-btn">ПУМБ</a>
+            <a href="ТВОЄ_ПОСИЛАННЯ_ПУМБ" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; background:#E30613; border-radius:6px; color:#fff; font-weight:900; font-size:8px; text-decoration:none;">ПУМБ</a>
         </div>
     </header>
 
