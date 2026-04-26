@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <title>Карта повітряних тривог України</title>
+    <title>UA_MONITOR // TACTICAL HUD // AFU</title>
     
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sky-monitor.fun/">
-    <meta property="og:title" content="Карта повітряних тривог України">
-    <meta property="og:description" content="Карта повітряних тривог України. Моніторинг повітряних тривог та авіації.">
+    <meta property="og:title" content="UA_MONITOR // TACTICAL HUD // AFU">
+    <meta property="og:description" content="Карта повітряних тривог України. Моніторинг повітряних тривог та авіації. AFU EDITION.">
     <meta property="og:image" content="https://sky-monitor.fun/logo.jpg">
     
     <link rel="canonical" href="https://sky-monitor.fun">
@@ -17,70 +17,107 @@
     
     <style>
         :root { 
-            --accent: #ffd700; 
-            --bg: #050505; 
-            --card: rgba(15, 15, 15, 0.9); 
-            --red: #ff3e3e; 
+            --ua-blue: #0057b7;   /* Синій флаг ЗСУ */
+            --ua-gold: #ffd700;   /* Золотий флаг ЗСУ */
+            --bg: #030405; 
+            --card: rgba(5, 7, 10, 0.9); 
+            --red: #ff3333; 
         }
         
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Orbitron', sans-serif; color: #fff; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Share Tech Mono', monospace; color: #fff; overflow: hidden; }
         
-        /* Ефект "металевої" текстури */
+        /* Ефект цифрового камуфляжу та CRT-сітки */
         body::before {
             content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
-            z-index: 1000; pointer-events: none;
+            background: 
+                /* CRT сітка */
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02)),
+                /* Легкий цифровий шум */
+                url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36z8gAFWNZvXr1f0ZGRpBCfHw8AEbYDQm+mR6gAAAAAElFTkSuQmCC');
+            z-index: 1000; background-size: 100% 4px, 3px 100%, auto; pointer-events: none; opacity: 0.3;
         }
 
         .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
         .header { 
             height: 60px; display: flex; align-items: center; padding: 0 20px; 
-            background: var(--card); border-bottom: 2px solid var(--accent);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.1); z-index: 10;
+            background: var(--card); border-bottom: 2px solid var(--ua-blue);
+            box-shadow: 0 0 20px rgba(0, 87, 183, 0.3); z-index: 10;
         }
         
-        .brand { font-size: 12px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
-        #kyiv-time { margin-left: 20px; font-size: 22px; font-weight: 900; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+        .brand { font-size: 14px; font-weight: 900; color: var(--ua-gold); text-transform: uppercase; letter-spacing: 3px; line-height: 1; text-shadow: 0 0 5px var(--ua-gold); }
+        #kyiv-time { margin-left: 20px; font-size: 26px; font-weight: 900; color: var(--red); font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px var(--red); }
 
-        .viewport { flex-grow: 1; margin: 10px; border-radius: 5px; border: 1px solid #333; position: relative; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; filter: sepia(0.2) hue-rotate(-20deg) brightness(0.9); }
+        .viewport { flex-grow: 1; margin: 10px; border-radius: 5px; border: 1px solid var(--ua-blue); position: relative; background: #000; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; filter: sepia(0.3) hue-rotate(180deg) brightness(0.8) contrast(1.1); }
 
+        /* Оновлені тактичні оверлеї */
         #tg-overlay, #targets-overlay { 
-            position: absolute; background: rgba(0, 0, 0, 0.85); padding: 15px; 
-            border: 1px solid var(--accent); border-radius: 0; z-index: 999;
-            font-size: 12px; text-transform: uppercase; letter-spacing: 1px; pointer-events: none;
+            position: absolute; background: rgba(3, 4, 5, 0.9); padding: 15px; 
+            border: 1px solid var(--ua-blue); border-radius: 0; z-index: 999;
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1px; pointer-events: none;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         }
-        #tg-overlay { top: 20px; left: 20px; border-left: 4px solid var(--accent); }
-        #targets-overlay { top: 20px; right: 20px; border-right: 4px solid var(--red); color: var(--red); }
+        #tg-overlay { top: 20px; left: 20px; width: 320px; border-left: 3px solid var(--ua-gold); }
+        #targets-overlay { top: 20px; right: 20px; width: 280px; border-right: 3px solid var(--red); color: var(--red); border-color: var(--red); }
 
-        .rec-indicator { position: absolute; bottom: 40px; right: 20px; display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--accent); z-index: 999; }
-        .dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; animation: blink 1s infinite; }
+        /* Декоративні штучки: Кутові мітки */
+        .viewport::before, .viewport::after {
+            content: ""; position: absolute; width: 20px; height: 20px; border: 2px solid var(--ua-gold); z-index: 998;
+        }
+        .viewport::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .viewport::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        /* Індикатор REC та Статус */
+        .tactical-info { position: absolute; bottom: 40px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; z-index: 999; font-size: 10px; color: var(--ua-blue); }
+        .status-line { display: flex; align-items: center; gap: 8px; }
+        .rec-indicator { display: flex; align-items: center; gap: 8px; color: var(--red); font-weight: 800; }
+        .dot { width: 10px; height: 10px; background: var(--red); border-radius: 50%; animation: blink 1s infinite; }
+        
+        /* Скануюча лінія */
+        .scanline { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0, 87, 183, 0.2); animation: scan 4s linear infinite; z-index: 997; }
+
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes scan { from { top: 0%; } to { top: 100%; } }
 
-        .marquee-container { background: var(--accent); color: #000; padding: 6px 0; font-size: 11px; font-weight: 900; overflow: hidden; white-space: nowrap; }
-        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; }
+        /* Магучий бігучий рядок */
+        .marquee-container { background: var(--ua-blue); color: var(--ua-gold); padding: 7px 0; font-size: 12px; font-weight: 900; overflow: hidden; white-space: nowrap; border-top: 1px solid var(--ua-gold); box-shadow: 0 -5px 15px rgba(0, 87, 183, 0.2); }
+        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; text-transform: uppercase; letter-spacing: 1px; }
         @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="wrapper">
     <header class="header">
-        <div class="brand">MONITOR<br>UA</div>
+        <div class="brand">AFU // TACTICAL<br>UA_MONITOR // ACTIVE</div>
         <div id="kyiv-time">00:00:00</div>
     </header>
 
+    <main class="viewport">
+        <div class="scanline"></div>
+        <div class="tactical-info">
+            <div class="status-line"><span>SYS: AFU_NET_v4.1</span><span>[CONNECTED]</span></div>
+            <div class="rec-indicator"><div class="dot"></div> LIVE_FEED</div>
+        </div>
+        
+        <div id="tg-overlay">
+            <div style="font-weight:bold; color:var(--ua-gold); letter-spacing: 2px; border-bottom: 1px solid var(--ua-gold); padding-bottom: 5px; margin-bottom: 10px;">ОПЕРАТИВНЕ ЗВЕДЕННЯ:</div>
+            <div id="tg-content">Завантаження даних...</div>
+        </div>
+        
+        <div id="targets-overlay">
+            <div style="font-weight:bold; letter-spacing: 2px;">УВАГА: ЦІЛІ В ПОВІТРІ</div>
+            <div id="targets-content">НЕМАЄ</div>
+        </div>
 
-        
-        
-        
-      
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </main>
 
     <div class="marquee-container">
-        <div id="rss-feed" class="marquee-text">Система активна...</div>
+        <div id="rss-feed" class="marquee-text">Система активна... СЛАВА УКРАЇНІ! ГЕРОЯМ СЛАВА!</div>
     </div>
 </div>
 
@@ -100,7 +137,7 @@
                     document.getElementById('targets-content').innerText = latestPost;
                 }
             }
-        } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг працює"; }
+        } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг мережі активний"; }
     }
     loadTg(); setInterval(loadTg, 60000);
 
@@ -110,8 +147,8 @@
                 headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
             });
             const data = await response.json();
-            document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
-        } catch(e) { document.getElementById('rss-feed').innerText = "Система активна..."; }
+            document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") + " | СЛАВА ЗСУ!" : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ! ГЕРОЯМ СЛАВА!";
+        } catch(e) { document.getElementById('rss-feed').innerText = "Система активна... AFU // TACTICAL NET"; }
     }
     loadApi(); setInterval(loadApi, 30000);
 </script>
