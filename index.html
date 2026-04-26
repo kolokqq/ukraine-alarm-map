@@ -2,139 +2,62 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <title>UA_ALERT // GHOST_NET_v9 // ACTIVATE</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    
+    <title>DARK_OPS_MONITOR</title>
     <style>
-        :root { 
-            --toxic: #33ff33;    /* Ядовитий ртутний неон */
-            --blood: #ff003c;    /* Кривава матриця */
-            --bg-deep: #0a0c10; 
-            --glitch-bg: rgba(20, 25, 30, 0.9); 
-            --text-glow: 0 0 10px rgba(51, 255, 51, 0.4);
-        }
+        :root { --line: #333; --text: #fff; --alert: #ff3333; }
         
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-deep); font-family: 'Share Tech Mono', monospace; color: white; overflow: hidden; }
-        
-        /* ГАЛАКТИЧНИЙ ГЛІТЧ-ФОН */
-        body::before {
-            content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(10, 12, 16, 0.1) 50%, rgba(0, 0, 0, 0.3) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            z-index: 1000; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.6;
-        }
+        body { margin: 0; background: #050505; color: var(--text); font-family: 'Roboto Condensed', sans-serif; overflow: hidden; }
 
-        .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; }
+        /* Мінімалістична сітка */
+        .grid-bg { position: fixed; inset: 0; background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.2; pointer-events: none; }
 
-        /* HEADER: Cyberpunk Стримерський бар */
-        .header { 
-            height: 60px; display: flex; align-items: center; padding: 0 20px; 
-            background: var(--glitch-bg); border-bottom: 2px solid var(--toxic);
-            backdrop-filter: blur(15px); box-shadow: 0 0 25px rgba(51, 255, 51, 0.2); z-index: 10;
-        }
-        
-        .brand { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 4px; line-height: 1; text-shadow: 0 0 5px white; }
-        .brand span { color: var(--toxic); text-shadow: var(--text-glow); }
-        #kyiv-time { margin-left: 20px; font-size: 30px; font-weight: 900; color: var(--blood); text-shadow: 0 0 15px var(--blood); }
+        .layout { display: grid; grid-template-columns: 350px 1fr; grid-template-rows: 1fr 60px; height: 100vh; padding: 20px; gap: 20px; box-sizing: border-box; }
 
-        /* VIEWPORT: Карбонова рама для OBS */
-        .viewport { flex-grow: 1; margin: 10px; border-radius: 5px; border: 1px solid #1a1a1a; position: relative; background: black; overflow: hidden; box-shadow: inset 0 0 50px #000; }
-        iframe { width: 100%; height: 100%; border: none; filter: sepia(0.2) hue-rotate(-20deg) brightness(0.9); }
+        /* Картка */
+        .card { border: 1px solid var(--line); padding: 20px; background: rgba(10,10,10,0.8); backdrop-filter: blur(5px); }
+        h2 { font-size: 10px; letter-spacing: 4px; color: #888; margin-top: 0; }
 
-        /* ОВЕРЛЕЇ: Асиметричні "зрізи" під OBS */
-        #tg-overlay, #targets-overlay { 
-            position: absolute; background: var(--glitch-bg); padding: 18px; 
-            border: 1px solid var(--toxic); border-radius: 0; z-index: 999;
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; pointer-events: none;
-            backdrop-filter: blur(10px);
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-            box-shadow: 0 0 20px rgba(51, 255, 51, 0.2);
-            transition: transform 0.3s;
-        }
-        #tg-overlay { top: 25px; left: 25px; width: 340px; border-left: 4px solid var(--toxic); }
-        #targets-overlay { top: 25px; right: 25px; width: 300px; border-right: 4px solid var(--blood); color: var(--blood); border-color: var(--blood); text-shadow: 0 0 10px var(--blood); }
+        .map-wrapper { grid-column: 2; grid-row: 1 / 3; border: 1px solid var(--line); position: relative; }
+        iframe { width: 100%; height: 100%; border: none; filter: grayscale(1) brightness(0.7) invert(0.1); }
 
-        /* ТАКТИЧНИЙ СТАТУС-БАР: Ртутна "дихаюча" крапка */
-        .status-panel { position: absolute; bottom: 45px; left: 25px; display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--toxic); z-index: 999; text-transform: uppercase; letter-spacing: 2px; }
-        .pulse-dot { width: 10px; height: 10px; background: var(--toxic); border-radius: 50%; box-shadow: 0 0 10px var(--toxic); animation: pulse_mercury 2s infinite; }
-        
-        /* СКАНИ УСЮДИ */
-        .scanline { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(51, 255, 51, 0.1); animation: scan 4s linear infinite; z-index: 997; }
+        .alert-row { font-size: 14px; padding: 10px 0; border-bottom: 1px solid #111; display: flex; justify-content: space-between; }
+        .alert-row.active { color: var(--alert); font-weight: bold; }
 
-        @keyframes pulse_mercury { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.1); } }
-        @keyframes scan { from { top: 0%; } to { top: 100%; } }
-
-        /* БІГУЧИЙ РЯДОК: МЕРЕХТЛИВИЙ НЕОН */
-        .marquee-container { background: #000; color: white; padding: 7px 0; font-size: 13px; font-weight: 900; overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(51, 255, 51, 0.2); box-shadow: 0 -5px 15px rgba(51, 255, 51, 0.1); }
-        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px white; }
-        @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        .footer { grid-column: 1; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); padding: 0 20px; }
     </style>
 </head>
 <body>
-
-<div class="wrapper">
-    <header class="header">
-        <div class="brand">GHOST // NET v9 // ACTIVATE.<span>[STATUS:ACTIVE]</span></div>
-        <div id="kyiv-time">00:00:00</div>
-    </header>
-
-    <main class="viewport">
-        <div class="scanline"></div>
-        <div class="status-panel"><span>SYS:SECURE_NET</span><div class="pulse-dot"></div><span>TAC_HUD // AFU</span></div>
-        
-        <div id="tg-overlay">
-            <div style="font-weight:bold; color:var(--toxic); letter-spacing: 2.5px; border-bottom: 1px solid rgba(51, 255, 51, 0.2); padding-bottom: 5px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">LIVE INTEL // OP_UPDATE</div>
-            <div id="tg-content">Завантаження даних системи...</div>
+    <div class="grid-bg"></div>
+    <div class="layout">
+        <div class="card">
+            <h2>OPERATIONAL STATUS</h2>
+            <div id="alerts-container"></div>
         </div>
-        
-        <div id="targets-overlay">
-            <div style="font-weight:bold; letter-spacing: 2.5px; font-family: 'Orbitron', sans-serif;">THREAT_DETECTION // HIGH</div>
-            <div id="targets-content">ЦІЛІ НЕ ВИЯВЛЕНО</div>
+        <div class="map-wrapper">
+            <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
         </div>
-
-        <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
-    </main>
-
-    <div class="marquee-container">
-        <div id="rss-feed" class="marquee-text">Система активна... СЛАВА УКРАЇНІ! ГЕРОЯМ СЛАВА!</div>
+        <div class="footer">
+            <div id="clock">00:00:00</div>
+            <div>STATUS: STEALTH</div>
+        </div>
     </div>
-</div>
 
-<script>
-    // --- ТВОЯ ЛОГІКА СКРИПТІВ (ЗАЛИШИЛАСЯ БЕЗ ЗМІН) ---
-    function updateClock() { document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false }); }
-    setInterval(updateClock, 1000); updateClock();
+    <script>
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('uk-UA'); }, 1000);
 
-    async function loadTg() {
-        const feedUrl = "https://rss.app/feeds/buVZUROYCKje0Fdt.xml";
-        try {
-            const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
-            const data = await response.json();
-            if (data.items && data.items.length > 0) {
-                const latestPost = data.items[0].title;
-                document.getElementById('tg-content').innerText = latestPost;
-                if (latestPost.toLowerCase().includes("груп") || latestPost.toLowerCase().includes("ціль")) {
-                    document.getElementById('targets-content').innerText = latestPost;
-                }
-            }
-        } catch(e) { document.getElementById('tg-content').innerText = "Система моніторингу активна"; }
-    }
-    loadTg(); setInterval(loadTg, 60000);
-
-    async function loadApi() {
-        try {
-            const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
-                headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
+        async function update() {
+            const res = await fetch("https://api.ukrainealarm.com/api/v3/alerts", { headers: {"Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9"} });
+            const data = await res.json();
+            const cont = document.getElementById('alerts-container');
+            cont.innerHTML = "";
+            data.forEach(a => {
+                const row = document.createElement('div');
+                row.className = 'alert-row active';
+                row.innerHTML = `<span>${a.regionName.toUpperCase()}</span><span>[!]</span>`;
+                cont.appendChild(row);
             });
-            const data = await response.json();
-            document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") + " | СЛАВА ЗСУ!" : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
-        } catch(e) { document.getElementById('rss-feed').innerText = "Система активна... GHOST // NET"; }
-    }
-    loadApi(); setInterval(loadApi, 30000);
-</script>
-
+        }
+        update(); setInterval(update, 30000);
+    </script>
 </body>
 </html>
