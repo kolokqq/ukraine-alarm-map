@@ -23,11 +23,57 @@
         .viewport { flex-grow: 1; margin: 8px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--accent); position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* ЛЕГЕНДА */
-        .legend { position: absolute; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.8); border: 1px solid var(--accent); padding: 10px; border-radius: 10px; z-index: 999; color: #fff; font-size: 13px; pointer-events: none; }
-        @media (max-width: 600px) { .legend { font-size: 9px; padding: 5px; top: 10px; left: 10px; } }
+        /* --- СТИЛІ ОНОВЛЕНОЇ ЛЕГЕНДИ --- */
+        .legend-block {
+            position: absolute;
+            bottom: 20px; /* Опущено вниз */
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85); /* Трохи темніше */
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--accent);
+            color: #fff;
+            z-index: 1000;
+            font-size: 14px; /* Розмір для ПК */
+            pointer-events: none; /* Карта під нею клікабельна */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
 
-        #tg-overlay { position: absolute; top: 20px; left: 150px; width: 300px; background: rgba(0, 0, 0, 0.7); color: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--accent); z-index: 999; pointer-events: none; }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-item:last-child { margin-bottom: 0; }
+
+        /* Стилі для іконок */
+        .legend-icon {
+            width: 18px;  /* Розмір для ПК */
+            height: 18px; /* Розмір для ПК */
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- АДАПТИВНІСТЬ ДЛЯ ТЕЛЕФОНІВ (max-width: 600px) --- */
+        @media (max-width: 600px) {
+            .legend-block {
+                padding: 8px 10px;
+                font-size: 10px; /* Зменшений текст */
+                bottom: 10px;    /* Ближче до краю */
+                right: 10px;
+            }
+            .legend-item { margin-bottom: 5px; }
+            .legend-icon {
+                width: 12px;  /* Зменшені іконки */
+                height: 12px; /* Зменшені іконки */
+                margin-right: 6px;
+            }
+        }
+
+        #tg-overlay { position: absolute; top: 20px; left: 20px; width: 300px; background: rgba(0, 0, 0, 0.7); color: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--accent); z-index: 999; pointer-events: none; }
         #targets-overlay { position: absolute; top: 20px; right: 20px; width: 250px; background: rgba(255, 0, 0, 0.2); border: 1px solid red; color: #ff4d4d; padding: 10px; border-radius: 10px; z-index: 998; font-weight: bold; pointer-events: none; }
 
         .marquee-container { background: #000; color: var(--accent); padding: 5px 0; font-size: 10px; font-weight: 800; border-bottom: 1px solid #30363d; overflow: hidden; white-space: nowrap; }
@@ -39,51 +85,47 @@
 
 <div class="wrapper">
     <main class="viewport">
-        <div class="legend">
-            <div><span style="color:green">✘</span> Крилаті ракети</div>
-            <div><span style="color:yellow">⚡</span> Аеробалістичні</div>
-            <div><span style="color:red">▼</span> Ударні БпЛА</div>
-            <div><span style="color:magenta">/</span> Балістичні</div>
-            <div><span style="color:blue">✘</span> Х-101</div>
+        
+        <div class="legend-block">
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <svg viewBox="0 0 24 24"><path d="M4 18L18 4M4 14L14 4M4 10L10 4M4 6L6 4" stroke="#00FF00" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <div>Крилаті ракети</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <svg viewBox="0 0 24 24"><path d="M13 3l-2 7h5l-7 11 2-7H6l7-11z" fill="#FFFF00"/></svg>
+                </div>
+                <div>Аеробалістичні</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 4l9 16H3z" fill="#FF0000"/></svg>
+                </div>
+                <div>Ударні БпЛА</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <svg viewBox="0 0 24 24"><path d="M4 20L20 4" stroke="#FF00FF" stroke-width="2.5" stroke-linecap="round"/></svg>
+                </div>
+                <div>Балістичні</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <svg viewBox="0 0 24 24"><path d="M4 20L20 4M4 16L16 4M4 12L12 4M4 8L8 4" stroke="#0000FF" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <div>Х-101</div>
+            </div>
         </div>
 
-        
-        <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
-    </main>
+        <div id="tg-overlay">
+            <div style="font-weight:bold; color:var(--accent);"
 
-    <div class="marquee-container">
-        <div id="rss-feed" class="marquee-text">Система активна...</div>
-    </div>
-</div>
 
-<script>
-    async function loadTg() {
-        const feedUrl = "https://rss.app/feeds/buVZUROYCKje0Fdt.xml";
-        try {
-            const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
-            const data = await response.json();
-            if (data.items && data.items.length > 0) {
-                const latestPost = data.items[0].title;
-                document.getElementById('tg-content').innerText = latestPost;
-                if (latestPost.toLowerCase().includes("груп") || latestPost.toLowerCase().includes("ціль")) {
-                    document.getElementById('targets-content').innerText = latestPost;
-                }
-            }
-        } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг працює"; }
-    }
-    loadTg(); setInterval(loadTg, 60000);
 
-    async function loadApi() {
-        try {
-            const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
-                headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
-            });
-            const data = await response.json();
-            document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
-        } catch(e) { document.getElementById('rss-feed').innerText = "Система активна..."; }
-    }
-    loadApi(); setInterval(loadApi, 30000);
-</script>
-
-</body>
-</html>
+Оскільки це зображення, ви можете використати його як статичну картинку, вирізавши блок легенди та вставивши його поверх карти в HTML (наприклад, як абсолютний елемент), або просто замінити поточне зображення на нове.
