@@ -112,7 +112,7 @@
             document.getElementById('dot').className = data.length > 0 ? "dot red-dot" : "dot green-dot";
         } catch(e) { document.getElementById('rss-feed').innerText = "Система активна..."; }
     }
-   loadApi(); setInterval(loadApi, 1000); // Оновлення кожні 3 секунди
+   loadApi(); setInterval(loadApi, 5000); // Оновлення кожні 3 секунди
 </script>
 
 </body>
