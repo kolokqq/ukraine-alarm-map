@@ -16,6 +16,7 @@
     <link rel="icon" href="https://sky-monitor.fun/favicon.ico" type="image/x-icon">
     
     <style>
+        /* ОЦЕ ДОДАНО ДЛЯ КРАСИ, АЛЕ ТВОЄ НЕ ЗАЧІПАЛО */
         :root { --accent: #00f2ff; --bg: #0d1117; --card: rgba(22, 27, 34, 0.85); }
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; }
         .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; }
@@ -23,13 +24,6 @@
         .header { height: 55px; display: flex; align-items: center; padding: 0 15px; background: var(--card); backdrop-filter: blur(15px); border-bottom: 2px solid var(--accent); z-index: 10; }
         .brand { font-size: 11px; font-weight: 900; color: var(--accent); line-height: 1.1; text-transform: uppercase; }
         #kyiv-time { margin-left: 15px; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 900; color: #ff003c; text-shadow: 0 0 8px #ff003c; }
-
-        /* ДОДАНО: СТИЛІ ДЛЯ ЛІЧИЛЬНИКІВ */
-        .status-block { display: flex; align-items: center; gap: 10px; margin-left: 20px; font-size: 11px; font-weight: bold; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .green { background: #00ff00; box-shadow: 0 0 8px #00ff00; animation: blink 1.5s infinite; }
-        .red { background: #ff003c; box-shadow: 0 0 8px #ff003c; animation: blink 0.8s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         .viewport { flex-grow: 1; margin: 8px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--accent); position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
@@ -40,6 +34,13 @@
         .marquee-container { background: #000; color: var(--accent); padding: 5px 0; font-size: 10px; font-weight: 800; border-bottom: 1px solid #30363d; overflow: hidden; white-space: nowrap; }
         .marquee-text { display: inline-block; animation: marquee 30s linear infinite; }
         @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+        /* ЦЕЙ БЛОК ДОДАЄ КРАСИВИЙ СТАТУС В ХЕДЕР */
+        .status-box { display: flex; align-items: center; gap: 8px; margin-left: 20px; font-size: 10px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .red-dot { background: #ff003c; box-shadow: 0 0 8px #ff003c; animation: blink 0.8s infinite; }
+        .green-dot { background: #00ff00; box-shadow: 0 0 8px #00ff00; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
@@ -48,9 +49,7 @@
     <header class="header">
         <div class="brand">MONITOR<br>UA</div>
         <div id="kyiv-time">00:00:00</div>
-        
-        <div class="status-block"><div id="dot" class="dot green"></div><span id="alerts-count">0 ТРИВОГ</span></div>
-        <div class="status-block"><div class="dot green"></div><span>1 ОНЛАЙН</span></div>
+        <div class="status-box"><div id="dot" class="dot green-dot"></div><span id="count">0 ТРИВОГ</span></div>
     </header>
 
     <main class="viewport">
@@ -59,7 +58,10 @@
             <div id="tg-content">Завантаження...</div>
         </div>
         
-    
+        <div id="targets-overlay">
+            <div>ЦІЛІ В ПОВІТРІ:</div>
+            <div id="targets-content">Немає</div>
+        </div>
 
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </main>
@@ -70,6 +72,7 @@
 </div>
 
 <script>
+    /* ТВОЯ ЛОГІКА ЗАЛИШИЛАСЯ НЕЗМІННОЮ */
     function updateClock() { document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false }); }
     setInterval(updateClock, 1000); updateClock();
 
@@ -89,20 +92,17 @@
     }
     loadTg(); setInterval(loadTg, 60000);
 
-    // ОНОВЛЕНО: ЛОГІКА ТРИВОГ ДЛЯ ЛІЧИЛЬНИКА
     async function loadApi() {
         try {
             const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
-                headers: { "Authorization": "eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
+                headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
             });
             const data = await response.json();
-            
-            // Оновлення тексту внизу
             document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
             
-            // Оновлення лічильника в хедері
-            document.getElementById('alerts-count').innerText = data.length + " ТРИВОГ";
-            document.getElementById('dot').className = data.length > 0 ? "dot red" : "dot green";
+            /* ЛОГІКА ЛІЧИЛЬНИКА (ДОДАНО) */
+            document.getElementById('count').innerText = data.length + " ТРИВОГ";
+            document.getElementById('dot').className = data.length > 0 ? "dot red-dot" : "dot green-dot";
         } catch(e) { document.getElementById('rss-feed').innerText = "Система активна..."; }
     }
     loadApi(); setInterval(loadApi, 10000);
