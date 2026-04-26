@@ -16,21 +16,48 @@
     <link rel="icon" href="https://sky-monitor.fun/favicon.ico" type="image/x-icon">
     
     <style>
-        :root { --accent: #00f2ff; --bg: #0d1117; --card: rgba(22, 27, 34, 0.85); }
+        /* НОВИЙ ПАТРІОТИЧНИЙ ДИЗАЙН */
+        :root { 
+            --blue: #0057B7; 
+            --yellow: #FFD700; 
+            --bg: #0d1117; 
+        }
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; }
         .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
-        .header { height: 55px; display: flex; align-items: center; padding: 0 15px; background: var(--card); backdrop-filter: blur(15px); border-bottom: 2px solid var(--accent); z-index: 10; }
-        .brand { font-size: 11px; font-weight: 900; color: var(--accent); line-height: 1.1; text-transform: uppercase; }
-        #kyiv-time { margin-left: 15px; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 900; color: #ff003c; text-shadow: 0 0 8px #ff003c; }
+        /* ВЕРХ - СИНІЙ + КНОПКИ */
+        .header { height: 55px; display: flex; align-items: center; padding: 0 15px; background: var(--blue); border-bottom: 3px solid var(--yellow); z-index: 10; gap: 10px; /* Відступ між елементами */ }
+        .brand { font-size: 11px; font-weight: 900; color: #fff; line-height: 1.1; text-transform: uppercase; }
+        #kyiv-time { margin-left: 15px; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 900; color: var(--yellow); text-shadow: 0 0 5px #000; }
 
-        .viewport { flex-grow: 1; margin: 8px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--accent); position: relative; }
+        /* СТИЛЬ НОВИХ КНОПОК */
+        .header-btns { margin-left: auto; display: flex; gap: 8px; }
+        .nav-btn {
+            padding: 6px 12px;
+            font-size: 10px;
+            font-weight: 900;
+            border-radius: 4px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid transparent;
+            transition: 0.3s ease;
+        }
+        .btn-tg { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+        .btn-tg:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        /* ПУМБ (ЧЕРВОНИЙ) - ЗАПИТАННИЙ СТИЛЬ */
+        .btn-pumb { background: #E30613; color: white; }
+        .btn-pumb:hover { opacity: 0.9; }
+
+        .viewport { flex-grow: 1; margin: 8px; border-radius: 15px; overflow: hidden; background: #000; border: 2px solid var(--blue); position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        #tg-overlay { position: absolute; top: 20px; left: 20px; width: 300px; background: rgba(0, 0, 0, 0.7); color: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--accent); z-index: 999; pointer-events: none; }
-        #targets-overlay { position: absolute; top: 20px; right: 20px; width: 250px; background: rgba(255, 0, 0, 0.2); border: 1px solid red; color: #ff4d4d; padding: 10px; border-radius: 10px; z-index: 998; font-weight: bold; pointer-events: none; }
+        #tg-overlay { position: absolute; top: 20px; left: 20px; width: 300px; background: rgba(0, 0, 0, 0.7); color: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--blue); z-index: 999; pointer-events: none; }
+        #targets-overlay { position: absolute; top: 20px; right: 20px; width: 250px; background: rgba(255, 215, 0, 0.2); border: 1px solid var(--yellow); color: var(--yellow); padding: 10px; border-radius: 10px; z-index: 998; font-weight: bold; pointer-events: none; }
 
-        .marquee-container { background: #000; color: var(--accent); padding: 5px 0; font-size: 10px; font-weight: 800; border-bottom: 1px solid #30363d; overflow: hidden; white-space: nowrap; }
+        /* НИЗ - ЖОВТИЙ */
+        .marquee-container { background: var(--yellow); color: #000; padding: 5px 0; font-size: 10px; font-weight: 800; border-top: 3px solid var(--blue); overflow: hidden; white-space: nowrap; }
         .marquee-text { display: inline-block; animation: marquee 30s linear infinite; }
         @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
     </style>
@@ -42,17 +69,15 @@
         <div class="brand">MONITOR<br>UA</div>
         <div id="kyiv-time">00:00:00</div>
         
-        <div style="margin-left: auto; display: flex; gap: 8px;">
-            <a href="ТВОЄ_ПОСИЛАННЯ_ТГ" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border:1px solid var(--accent); border-radius:6px;">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--accent)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.24-1.5-1-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.06-.06-.15-.04-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.5 2.78-1.1 3.35-1.3 3.73-1.31.08 0 .27.02.39.12.1.08.13.19.14.27v.06z"/></svg>
-            </a>
-            <a href="ТВОЄ_ПОСИЛАННЯ_ПУМБ" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; background:#E30613; border-radius:6px; color:#fff; font-weight:900; font-size:8px; text-decoration:none;">ПУМБ</a>
+        <div class="header-btns">
+            <a href="ТВОЄ_ПОСИЛАННЯ_НА_ТГ" class="nav-btn btn-tg">Telegram</a>
+            <a href="ТВОЄ_ПОСИЛАННЯ_НА_ПУМБ" class="nav-btn btn-pumb">ПУМБ</a>
         </div>
     </header>
 
     <main class="viewport">
         <div id="tg-overlay">
-            <div style="font-weight:bold; color:var(--accent);">ОПЕРАТИВНО:</div>
+            <div style="font-weight:bold; color:var(--yellow);">ОПЕРАТИВНО:</div>
             <div id="tg-content">Завантаження...</div>
         </div>
         
@@ -70,6 +95,7 @@
 </div>
 
 <script>
+    /* ТВІЙ ОРИГІНАЛЬНИЙ СКРИПТ (НЕЗАЙМАНИЙ) */
     function updateClock() { document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false }); }
     setInterval(updateClock, 1000); updateClock();
 
@@ -98,7 +124,7 @@
             document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
         } catch(e) { document.getElementById('rss-feed').innerText = "Система активна..."; }
     }
-    loadApi(); setInterval(loadApi, 30000);
+    loadApi(); setInterval(loadApi, 3000); // 3000 мс, як ти просив
 </script>
 
 </body>
