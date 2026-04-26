@@ -1,73 +1,181 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UA TACTICAL DATA // OPERATION: ALERT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
-
-        body { margin: 0; background: transparent; font-family: 'Orbitron', sans-serif; }
-
-        .hud-container {
-            position: absolute;
-            top: 50px;
-            left: 50px;
-            width: 450px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(20, 0, 0, 0.9));
-            border: 2px solid #ff0000;
-            padding: 20px;
-            color: #ff3333;
-            text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
+        :root {
+            --neon-green: #3fff3f;
+            --alert-red: #ff3c3c;
+            --bg-dark: #0a0c10;
+            --panel-bg: rgba(20, 22, 28, 0.9);
+            --border-style: 1px solid var(--neon-green);
+            --glow: 0 0 10px rgba(63, 255, 63, 0.4);
         }
 
-        .hud-header {
-            font-size: 24px;
-            font-weight: 900;
-            border-bottom: 2px solid #ff3333;
-            padding-bottom: 10px;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: repeating-linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 1px, transparent 1px, transparent 2px);
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Ефект CRT монітора */
+        body::after {
+            content: "";
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.01);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .tactical-tablet {
+            width: 100%;
+            max-width: 1100px;
+            height: 100%;
+            max-height: 700px;
+            background: var(--panel-bg);
+            border: var(--border-style);
+            box-shadow: var(--glow);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        /* Заголовок */
+        .header {
+            padding: 15px 25px;
+            border-bottom: var(--border-style);
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
         }
 
-        .status-blink {
-            animation: blink 1s infinite;
-            color: #fff;
-            background: #ff0000;
-            padding: 2px 8px;
+        .header h1 {
+            font-family: 'Chakra Petch', sans-serif;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
         }
 
-        .data-row { margin-top: 15px; font-size: 18px; }
+        .system-info { display: flex; gap: 20px; color: var(--alert-red); }
 
-        .glitch { animation: glitch 2s infinite; }
-
-        @keyframes blink { 50% { opacity: 0; } }
-        
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
+        /* Сітка контенту */
+        .content-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            padding: 20px;
+            overflow: hidden;
         }
+
+        /* Ліва панель */
+        .panel {
+            border: var(--border-style);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .panel-title { text-transform: uppercase; border-bottom: 1px solid rgba(63, 255, 63, 0.3); padding-bottom: 5px; color: #fff; }
+
+        .region-status {
+            padding: 10px;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .region-status.critical { border-left-color: var(--alert-red); color: var(--alert-red); }
+        .region-status.safe { border-left-color: var(--neon-green); color: var(--neon-green); }
+        .region-status:hover { background: rgba(63, 255, 63, 0.1); }
+
+        /* Права панель (Дисплей) */
+        .display-area {
+            border: var(--border-style);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scan-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(63, 255, 63, 0.6);
+            animation: scan 3s linear infinite;
+        }
+
+        .main-timer { font-size: 4rem; color: #fff; text-shadow: 0 0 15px #fff; }
+
+        /* Адаптивність */
+        @media (max-width: 768px) {
+            .tactical-tablet { max-height: none; height: auto; }
+            .content-grid { grid-template-columns: 1fr; }
+            .display-area { height: 200px; }
+            .main-timer { font-size: 2.5rem; }
+            .header h1 { font-size: 1.1rem; }
+        }
+
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body>
 
-    <div class="hud-container">
-        <div class="hud-header">
-            SYSTEM ALERT <span class="status-blink">ACTIVE</span>
+    <div class="tactical-tablet">
+        <div class="header">
+            <h1>ALERT // UNIT 444</h1>
+            <div class="system-info">
+                <span>[ STATUS: ACTIVE ]</span>
+                <span id="currentTime">00:00:00</span>
+            </div>
         </div>
-        <div class="data-row">
-            AREA: ZAPORIZHZHIA REGION
-        </div>
-        <div class="data-row glitch">
-            THREAT LEVEL: CRITICAL
-        </div>
-        <div style="margin-top: 20px; font-size: 12px; opacity: 0.7;">
-            EN0T1K_UA_PROTOCOL // 26.04.2026
+
+        <div class="content-grid">
+            <div class="panel">
+                <div class="panel-title">Система Сповіщень</div>
+                
+                <div class="region-status critical">
+                    <p>ЗАПОРІЖЖЯ // CRITICAL</p>
+                    <p style="font-size: 0.8rem; color: #aaa;">Активна // 07:41</p>
+                </div>
+                
+                <div class="region-status safe">
+                    <p>КИЇВ // CLEAR</p>
+                    <p style="font-size: 0.8rem; color: #aaa;">Відбій // 06:15</p>
+                </div>
+
+                <div class="region-status safe">
+                    <p>ЛЬВІВ // CLEAR</p>
+                    <p style="font-size: 0.8rem; color: #aaa;">Відбій // 05:01</p>
+                </div>
+            </div>
+
+            <div class="display-area">
+                <div class="scan-line"></div>
+                <div class="main-timer">27 <span style="font-size: 1.5rem">ХВ</span></div>
+            </div>
         </div>
     </div>
 
+    <script>
+        setInterval(() => {
+            document.getElementById('currentTime').innerText = new Date().toLocaleTimeString('uk-UA');
+        }, 1000);
+    </script>
 </body>
 </html>
